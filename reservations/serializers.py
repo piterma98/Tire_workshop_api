@@ -12,6 +12,7 @@ class ReservationSerializer(serializers.ModelSerializer):
     """Reservation serializer."""
 
     workshop_name = serializers.CharField(source='workshop.name', read_only=True)
+    position_name = serializers.CharField(source='workshop_position.name', read_only=True)
 
     class Meta:  # noqa: D106
         model = Reservation
@@ -20,10 +21,11 @@ class ReservationSerializer(serializers.ModelSerializer):
             'workshop',
             'workshop_name',
             'workshop_position',
+            'position_name',
             'customer',
             'date',
             'status',
-            'car_license_plat',
+            'car_license_plate',
             'car_type',
         ]
         read_only_fields = ('id', 'status', 'customer')

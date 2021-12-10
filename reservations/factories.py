@@ -31,5 +31,5 @@ class ReservationFactory(DjangoModelFactory):
         datetime.datetime(2000, 1, 1, tzinfo=datetime.timezone.utc),
         datetime.datetime(2015, 12, 31, 20, tzinfo=datetime.timezone.utc),
     )
-    car_license_plat = fuzzy.FuzzyText(length=8)
+    car_license_plate = fuzzy.FuzzyText(length=8)
     car_type = factory.Faker('random_element', elements=CarType.values)

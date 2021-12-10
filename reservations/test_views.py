@@ -75,7 +75,7 @@ class ReservationsViewSetTestCase(APITestCase):
             'workshop': self.workshop.id,
             'workshop_position': self.position.id,
             'date': random_date,
-            'car_license_plat': 'TEST123',
+            'car_license_plate': 'TEST123',
             'car_type': 'sedan',
         }, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -86,7 +86,7 @@ class ReservationsViewSetTestCase(APITestCase):
             'workshop': self.workshop.id,
             'date': datetime.now(),
             'workshop_position': self.position.id,
-            'car_license_plat': 'TEST123',
+            'car_license_plate': 'TEST123',
             'car_type': 'sedan',
         }, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

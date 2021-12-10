@@ -7,18 +7,14 @@ class IsWorkshopOwner(BasePermission):
     """WorkshopOwner permission."""
 
     def has_permission(self, request, view):  # noqa: D102
-        if hasattr(request.user, 'workshopowner'):
-            return True
-        return False
+        return request.user.is_workshop_owner
 
 
 class IsWorkshopCustomer(BasePermission):
     """WorkshopCustomer permission."""
 
     def has_permission(self, request, view):  # noqa: D102
-        if hasattr(request.user, 'workshopcustomer'):
-            return True
-        return False
+        return request.user.is_workshop_customer
 
 
 class IsWorkshopObjOwner(BasePermission):

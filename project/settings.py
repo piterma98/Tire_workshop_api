@@ -15,11 +15,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-# 3rd-party
-from dotenv import load_dotenv
-
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -28,12 +23,12 @@ DATA_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = 'xCXO9UWitQ88szixBuuBTOUQkTYHV9pSbrLegCBWUzLd0lYpai'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -92,16 +87,16 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT'),
-    },
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'db',
+#         'USER': 'postgres',
+#         'PASSWORD': '123456',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     },
+# }
 
 
 # Password validation
@@ -163,29 +158,9 @@ STATIC_ROOT = os.path.join(DATA_DIR, 'apps_static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
-
 DEFAULT_RENDERER_CLASSES = (
     'rest_framework.renderers.JSONRenderer',
 )
-
-if DEBUG:
-    DEFAULT_RENDERER_CLASSES = DEFAULT_RENDERER_CLASSES + (
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    )
-
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ],
-    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
-}
-
-CORS_ORIGIN_WHITELIST = os.getenv('FRONTEND_HOST').split(',')
 
 
 SIMPLE_JWT = {
@@ -209,9 +184,9 @@ DJOSER = {
     'ACTIVATION_URL': 'activate/{uid}/{token}',
     # "SEND_ACTIVATION_EMAIL": True,
     'SERIALIZERS': {
-        'user_create': 'accounts.serializers.CustomUserCreateSerializer',  # custom serializer
-        'user': 'djoser.serializers.UserSerializer',
-        'current_user': 'djoser.serializers.UserSerializer',
+        'user_create': 'accounts.serializers.CustomUserCreateSerializer',
+        'user': 'accounts.serializers.CustomUserSerializer',
+        'current_user': 'accounts.serializers.CustomUserSerializer',
         'user_delete': 'djoser.serializers.UserSerializer',
         'user_create_password_retype': 'accounts.serializers.CustomUserCreateSerializer',
     },
@@ -228,3 +203,27 @@ SWAGGER_SETTINGS = {
 }
 
 RESERVATIONS_FREQUENCY = '30min'
+
+
+try:
+    # Project
+    from project.settings_local import *  # noqa: F403, F401
+except ImportError:
+    pass
+
+if DEBUG:
+    DEFAULT_RENDERER_CLASSES = DEFAULT_RENDERER_CLASSES + (
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    )
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
+}
+
+CORS_ORIGIN_ALLOW_ALL = True

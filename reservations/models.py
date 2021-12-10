@@ -44,11 +44,11 @@ class Reservation(models.Model):
     workshop_position = models.ForeignKey(WorkshopPosition, on_delete=models.SET_NULL,
                                           blank=True, null=True)
     date = models.DateTimeField()
-    car_license_plat = models.CharField(max_length=30)
+    car_license_plate = models.CharField(max_length=30)
     status = models.CharField(_('Reservation status'), choices=Status.choices,
                               default=Status.ACCEPTED, max_length=30)
     car_type = models.CharField(_('Car type'), max_length=30, choices=CarType.choices)
     date_created = models.DateTimeField(_('Date created'), auto_now=True)
 
     def __str__(self):  # noqa: D105
-        return f'{self.customer} {self.car_license_plat} {self.workshop} {self.workshop_position}'
+        return f'{self.customer} {self.car_license_plate} {self.workshop} {self.workshop_position}'

@@ -20,20 +20,14 @@ class BusinessHoursSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'day_of_week')
 
 
-class NestedBusinessHoursSerializer(serializers.ModelSerializer):
-    """Business hours serializer."""
-
-    class Meta:  # noqa: D106
-        model = BusinessHours
-        fields = ('day_of_week', 'from_hour', 'to_hour', 'is_open')
-
-
 class ServicesPriceListSerializer(serializers.ModelSerializer):
     """Services price list serializer."""
 
+    workshop_name = serializers.ReadOnlyField(source='workshop.name')
+
     class Meta:  # noqa: D106
         model = ServicesPriceList
-        fields = ('id', 'workshop', 'name', 'price')
+        fields = ('id', 'workshop', 'workshop_name', 'name', 'price')
         extra_kwargs = {'workshop': {'required': True}}
 
     def create(self, validated_data):  # noqa: D102
@@ -41,14 +35,11 @@ class ServicesPriceListSerializer(serializers.ModelSerializer):
         workshop_owner = request.user.workshopowner
         if workshop_owner != validated_data['workshop'].owner:
             raise serializers.ValidationError({'detail': 'You are not workshop owner'})
-        return validated_data
+        return super().create(validated_data)
 
 
 class WorkshopSerializer(serializers.ModelSerializer):
     """Workshop serializer."""
-
-    business_hours = NestedBusinessHoursSerializer(read_only=True, many=True,
-                                                   source='businesshours_set')
 
     class Meta:  # noqa: D106
         model = Workshop
@@ -63,9 +54,8 @@ class WorkshopSerializer(serializers.ModelSerializer):
             'phone_number',
             'page',
             'average_rating',
-            'business_hours',
         ]
-        read_only_fields = ('id', 'business_hours', 'average_rating')
+        read_only_fields = ('id', 'average_rating')
 
 
 class WorkshopPositionSerializer(serializers.ModelSerializer):

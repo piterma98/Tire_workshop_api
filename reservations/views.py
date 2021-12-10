@@ -37,6 +37,9 @@ class ReservationViewSet(GenericViewSet, RetrieveModelMixin, ListModelMixin, Cre
             if hasattr(self.request.user, 'workshopowner'):
                 return self.queryset.filter(workshop__owner=self.request.user.workshopowner)
 
+    def perform_create(self, serializer):  # noqa: D102
+        return serializer.save(customer=self.request.user.workshopcustomer)
+
     @action(methods=['patch'], detail=True, url_path='workshop', url_name='workshop-update',
             serializer_class=WorkshopOwnerReservationSerializer,
             permission_classes=(IsAuthenticated, IsWorkshopOwner))

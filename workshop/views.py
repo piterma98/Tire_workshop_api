@@ -7,13 +7,13 @@ from datetime import datetime
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.mixins import CreateModelMixin
 from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import ModelViewSet
 
 # Project
 from accounts.pagination import PageNumberPagination
@@ -47,11 +47,12 @@ class BusinessHoursViewSet(GenericViewSet, RetrieveModelMixin, ListModelMixin, U
 
     def get_queryset(self):  # noqa: D102
         if not self.request.user.is_anonymous:
-            return self.queryset.filter(
+            qs = self.queryset.filter(
                 workshop__owner=self.request.user.workshopowner)
+            return qs
 
 
-class ServicePriceListViewSet(GenericViewSet, CreateModelMixin, UpdateModelMixin, ListModelMixin):
+class ServicePriceListViewSet(ModelViewSet):
     """Service price list view set."""
 
     serializer_class = ServicesPriceListSerializer
@@ -88,6 +89,17 @@ class WorkshopViewSet(GenericViewSet, RetrieveModelMixin, ListModelMixin, Update
         workshop = self.get_object()
         object_list = ServicesPriceList.objects.filter(workshop=workshop)
         object_json = ServicesPriceListSerializer(object_list, many=True)
+        return Response(object_json.data)
+
+    @action(methods=['get'], detail=True, url_path='businesshour-list',
+            url_name='businesshour-list')
+    def businesshour_list(self, request, pk=None):
+        """Get list of workshop businesshour list."""
+        workshop = self.get_object()
+        object_list = BusinessHours.objects.filter(workshop=workshop)
+        order = BusinessHours.DayOfWeek.values
+        sorted_qs = sorted(object_list, key=lambda x: order.index(x.day_of_week))
+        object_json = BusinessHoursSerializer(sorted_qs, many=True)
         return Response(object_json.data)
 
     @action(methods=['get'], detail=True, url_path='rating_list',

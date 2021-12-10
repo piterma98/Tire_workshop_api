@@ -22,6 +22,16 @@ class CustomUser(AbstractUser):
     def __str__(self):  # noqa: D105
         return self.email
 
+    @property
+    def is_workshop_owner(self):
+        """Return user type."""
+        return hasattr(self, 'workshopowner')
+
+    @property
+    def is_workshop_customer(self):
+        """Return user type."""
+        return hasattr(self, 'workshopcustomer')
+
 
 class WorkshopOwner(models.Model):
     """WorkshopOwner model."""
